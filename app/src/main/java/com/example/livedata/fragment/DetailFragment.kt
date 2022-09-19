@@ -66,9 +66,10 @@ class DetailFragment : Fragment() {
         val bitmap = (drawable as BitmapDrawable).bitmap
 
         // Click listener for button widget
-        binding.btnBuy.setOnClickListener {
-            val uri: Uri = saveImageToExternalStorage(bitmap)
-            val message = """
+        if(isAppInstalled("com.whatsapp")){
+            binding.btnBuy.setOnClickListener {
+                val uri: Uri = saveImageToExternalStorage(bitmap)
+                val message = """
                 halo, saya tertarik dengan produk
                 ${args.dataProduct.name} dengan harga Rp. ${args.dataProduct.price},
                 apakah masih available
@@ -81,6 +82,9 @@ class DetailFragment : Fragment() {
                     `package` = "com.whatsapp"
                 }
                 startActivity(whatsApp)
+            }
+        }else{
+            Toast.makeText(requireActivity(), "Aplikasi Whatsappp belum terinstal", Toast.LENGTH_SHORT).show()
         }
     }
     fun saveImageToExternalStorage(bitmap: Bitmap?): Uri {
@@ -97,6 +101,16 @@ class DetailFragment : Fragment() {
         }
 //        Toast.makeText(requireActivity(), file.absolutePath, Toast.LENGTH_SHORT).show()
         return Uri.parse(file.absolutePath)
+    }
+
+    fun isAppInstalled(packageName : String) :Boolean {
+        try {
+            activity?.packageManager?.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            return true;
+        }
+        catch (e : Exception) {
+            return false;
+        }
     }
 
 
